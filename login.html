@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  MUST Applications – LOGIN screen (design prototype)
+  File:    login.html        Stylesheet: styles.css
+  Course:  Internet Technology and Web Design (Software Engineering)
+
+  PURPOSE
+    Lets an applicant who already has an access code sign in to the MUST
+    admission application system.
+
+  BASED ON THE MUST APPLICATION GUIDELINES
+    - Applicants log in with their EMAIL ADDRESS and a 6-digit ACCESS CODE.
+    - The access code is sent by SMS and email when the account is created.
+    - Applicants without a code are sent to the account creation screen.
+    - After login, the applicant chooses an application scheme, pays the
+      form fee and submits documents (shown in the route on the left).
+
+  PAGE STRUCTURE
+    <aside class="brand-panel">  left: branding + 4-step application route
+    <main  class="form-panel">   right: prototype notice, login form, footer
+
+  NOTE
+    This is a front-end prototype only. The form has no back end, so
+    nothing is sent anywhere (action="#"). A real system would post to a
+    server over HTTPS.
+  ============================================================================
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <!-- Makes the layout scale correctly on phones -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in | MUST Applications (design prototype)</title>
+  <meta name="description" content="Log in to the Mbarara University of Science and Technology (MUST) admission application system. Student design prototype.">
+
+  <!-- Web fonts: Sora (headings) and Source Sans 3 (body).
+       styles.css has fallbacks if these cannot load. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap">
+
+  <!-- Shared stylesheet for both screens -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- ======================= LEFT: BRAND PANEL ======================= -->
+    <aside class="brand-panel">
+
+      <!-- Wordmark: links back to the login page -->
+      <a class="wordmark" href="login.html" aria-label="MUST Applications home">
+        <span class="wordmark__tile" aria-hidden="true">M</span>
+        <span class="wordmark__text">
+          <span class="wordmark__name">MUST</span>
+          <span class="wordmark__full">Mbarara University of Science and Technology</span>
+        </span>
+      </a>
+
+      <div class="brand-panel__intro">
+        <h1>Apply to MUST</h1>
+        <p>Four steps take you from account to submitted application.</p>
+        <!-- Mobile only: replaces the full route on small screens -->
+        <p class="mobile-step">Step 2 of 4: log in and choose a scheme</p>
+      </div>
+
+      <!-- Application route: an ordered list because the steps are a real
+           sequence. aria-current="step" marks where the applicant is now.
+           On this page the applicant is at step 2. -->
+      <ol class="route" aria-label="Application steps">
+        <li class="route__step">
+          <span class="route__title">Create your account</span>
+          <span class="route__hint">We send a 6-digit access code to your phone and email.</span>
+        </li>
+        <li class="route__step" aria-current="step">
+          <span class="route__title">Log in and choose a scheme</span>
+          <span class="route__hint">Direct entry, diploma entry, postgraduate or PhD.</span>
+        </li>
+        <li class="route__step">
+          <span class="route__title">Pay the form fee</span>
+          <span class="route__hint">Use your payment reference at any bank that takes URA payments.</span>
+        </li>
+        <li class="route__step">
+          <span class="route__title">Send your documents</span>
+          <span class="route__hint">Degree and diploma holders attach certified copies.</span>
+        </li>
+      </ol>
+
+      <p class="brand-panel__motto">Succeed We Must</p>
+    </aside>
+
+    <!-- ======================== RIGHT: FORM PANEL ======================== -->
+    <main class="form-panel">
+
+      <!-- Prototype notice: this page is a student design, not the live portal -->
+      <p class="notice">
+        Student design prototype. This is not the official MUST portal and it sends no data.
+        To apply, use <a href="https://applications.must.ac.ug">applications.must.ac.ug</a>.
+      </p>
+
+      <section class="card" aria-labelledby="login-title">
+        <h2 id="login-title">Log in</h2>
+        <p class="card__lede">Use the email address and access code from your sign-up.</p>
+
+        <!-- LOGIN FORM
+             - method="post": credentials must never appear in the URL
+             - HTML5 validation (required, type, pattern) checks input before
+               submitting, with no JavaScript needed
+             - autocomplete values help browsers and password managers -->
+        <form action="#" method="post">
+
+          <!-- Email address -->
+          <div class="field">
+            <label for="email">Email address</label>
+            <input type="email" id="email" name="email"
+                   autocomplete="email" placeholder="name@example.com"
+                   required>
+          </div>
+
+          <!-- Access code: 6 digits, masked like a password.
+               inputmode="numeric" opens the number keypad on phones. -->
+          <div class="field">
+            <label for="access-code">Access code</label>
+            <input type="password" id="access-code" name="access_code"
+                   inputmode="numeric" autocomplete="current-password"
+                   minlength="6" maxlength="6" pattern="[0-9]{6}"
+                   aria-describedby="code-hint" required>
+            <p class="field__hint" id="code-hint">
+              The 6-digit code sent to your phone and email. If the SMS is late, check your email.
+            </p>
+          </div>
+
+          <button type="submit" class="btn btn--primary">Log in</button>
+        </form>
+
+        <!-- Applicants without a code are sent to account creation -->
+        <p class="alt-action">No access code yet?</p>
+        <a class="btn btn--ghost" href="register.html">Create an account</a>
+      </section>
+
+      <!-- Footer: contact details from the MUST admissions page -->
+      <footer class="page-footer">
+        Admissions help: <a href="mailto:admissions@must.ac.ug">admissions@must.ac.ug</a>
+        &nbsp;|&nbsp; <span class="nowrap">+256 414 668971</span>
+      </footer>
+    </main>
+
+  </div>
+</body>
+</html>

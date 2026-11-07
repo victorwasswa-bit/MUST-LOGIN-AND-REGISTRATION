@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  MUST Applications – ACCOUNT CREATION screen (design prototype)
+  File:    register.html     Stylesheet: styles.css
+  Course:  Internet Technology and Web Design (Software Engineering)
+
+  PURPOSE
+    First step of an application: the applicant gives basic contact details
+    and the system sends a 6-digit access code by SMS and email.
+
+  BASED ON THE MUST APPLICATION GUIDELINES
+    - Sign-up needs an email address and a phone number.
+    - A temporary 6-digit access code is sent to BOTH phone and email,
+      because SMS delivery can be delayed.
+    - Application fees differ for Ugandan/EAC and international applicants,
+      so the form asks which group the applicant belongs to.
+    - Applicants must give true information; false information leads to
+      cancellation of admission (shown in the confirmation checkbox).
+
+  PAGE STRUCTURE
+    Same two-panel layout as login.html, so both screens feel like one system.
+    <aside class="brand-panel">  left: branding + 4-step application route
+    <main  class="form-panel">   right: prototype notice, sign-up form, footer
+
+  NOTE
+    Front-end prototype only: action="#" means nothing is sent anywhere.
+  ============================================================================
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <!-- Makes the layout scale correctly on phones -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create account | MUST Applications (design prototype)</title>
+  <meta name="description" content="Create an account to apply to Mbarara University of Science and Technology (MUST). Student design prototype.">
+
+  <!-- Web fonts: Sora (headings) and Source Sans 3 (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap">
+
+  <!-- Shared stylesheet for both screens -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- ======================= LEFT: BRAND PANEL ======================= -->
+    <aside class="brand-panel">
+
+      <a class="wordmark" href="login.html" aria-label="MUST Applications home">
+        <span class="wordmark__tile" aria-hidden="true">M</span>
+        <span class="wordmark__text">
+          <span class="wordmark__name">MUST</span>
+          <span class="wordmark__full">Mbarara University of Science and Technology</span>
+        </span>
+      </a>
+
+      <div class="brand-panel__intro">
+        <h1>Apply to MUST</h1>
+        <p>Four steps take you from account to submitted application.</p>
+        <!-- Mobile only: replaces the full route on small screens -->
+        <p class="mobile-step">Step 1 of 4: create your account</p>
+      </div>
+
+      <!-- Application route. On this page the applicant is at step 1. -->
+      <ol class="route" aria-label="Application steps">
+        <li class="route__step" aria-current="step">
+          <span class="route__title">Create your account</span>
+          <span class="route__hint">We send a 6-digit access code to your phone and email.</span>
+        </li>
+        <li class="route__step">
+          <span class="route__title">Log in and choose a scheme</span>
+          <span class="route__hint">Direct entry, diploma entry, postgraduate or PhD.</span>
+        </li>
+        <li class="route__step">
+          <span class="route__title">Pay the form fee</span>
+          <span class="route__hint">Use your payment reference at any bank that takes URA payments.</span>
+        </li>
+        <li class="route__step">
+          <span class="route__title">Send your documents</span>
+          <span class="route__hint">Degree and diploma holders attach certified copies.</span>
+        </li>
+      </ol>
+
+      <p class="brand-panel__motto">Succeed We Must</p>
+    </aside>
+
+    <!-- ======================== RIGHT: FORM PANEL ======================== -->
+    <main class="form-panel">
+
+      <!-- Prototype notice -->
+      <p class="notice">
+        Student design prototype. This is not the official MUST portal and it sends no data.
+        To apply, use <a href="https://applications.must.ac.ug">applications.must.ac.ug</a>.
+      </p>
+
+      <section class="card" aria-labelledby="register-title">
+        <h2 id="register-title">Create your account</h2>
+        <p class="card__lede">We will send an access code to your phone and email so you can log in.</p>
+
+        <!-- ACCOUNT CREATION FORM
+             - HTML5 validation (required, type, pattern) runs before submit
+             - autocomplete tokens let browsers fill in known details -->
+        <form action="#" method="post">
+
+          <!-- Name fields side by side (stack on narrow phones) -->
+          <div class="field-row">
+            <div class="field">
+              <label for="first-name">First name</label>
+              <input type="text" id="first-name" name="first_name"
+                     autocomplete="given-name" required>
+            </div>
+            <div class="field">
+              <label for="last-name">Last name</label>
+              <input type="text" id="last-name" name="last_name"
+                     autocomplete="family-name" required>
+            </div>
+          </div>
+
+          <!-- Email: the access code is also sent here -->
+          <div class="field">
+            <label for="email">Email address</label>
+            <input type="email" id="email" name="email"
+                   autocomplete="email" placeholder="name@example.com"
+                   required>
+          </div>
+
+          <!-- Phone: type="tel" opens the phone keypad on mobile.
+               The pattern accepts an optional + then 9 to 15 digits or
+               spaces, so Ugandan and international numbers both work. -->
+          <div class="field">
+            <label for="phone">Phone number</label>
+            <input type="tel" id="phone" name="phone"
+                   autocomplete="tel" placeholder="+256 7XX XXX XXX"
+                   pattern="\+?[0-9 ]{9,15}"
+                   aria-describedby="phone-hint" required>
+            <p class="field__hint" id="phone-hint">
+              The code arrives by SMS and email. If the SMS is slow, check your email.
+            </p>
+          </div>
+
+          <!-- Applicant group: decides the application fee.
+               A fieldset + legend groups the radio buttons for screen readers.
+               Styling for the .segmented look is in styles.css, section 6. -->
+          <fieldset class="field">
+            <legend>I am applying as</legend>
+            <div class="segmented">
+              <label>
+                <input type="radio" name="applicant_group" value="ugandan-eac" required>
+                <span>Ugandan or East African</span>
+              </label>
+              <label>
+                <input type="radio" name="applicant_group" value="international">
+                <span>International</span>
+              </label>
+            </div>
+            <p class="field__hint">Application fees are different for each group.</p>
+          </fieldset>
+
+          <!-- Truthfulness confirmation, taken from MUST's admission rules -->
+          <label class="check" for="confirm">
+            <input type="checkbox" id="confirm" name="confirm" required>
+            <span>I confirm my details are true. I understand false information can cancel my admission.</span>
+          </label>
+
+          <button type="submit" class="btn btn--primary">Create account and send code</button>
+        </form>
+
+        <!-- Existing applicants go to the login screen -->
+        <p class="alt-action">Already have an access code? <a href="login.html">Log in</a></p>
+      </section>
+
+      <footer class="page-footer">
+        Admissions help: <a href="mailto:admissions@must.ac.ug">admissions@must.ac.ug</a>
+        &nbsp;|&nbsp; <span class="nowrap">+256 414 668971</span>
+      </footer>
+    </main>
+
+  </div>
+</body>
+</html>

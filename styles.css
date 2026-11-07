@@ -1,0 +1,548 @@
+/* ==========================================================================
+   MUST Applications – Login & Account Creation (design prototype)
+   File:     styles.css
+   Used by:  login.html, register.html
+   Course:   Internet Technology and Web Design (Software Engineering)
+
+   TABLE OF CONTENTS
+   1.  Design tokens (colours, type, spacing)
+   2.  Base / reset
+   3.  Page layout (two-panel split screen)
+   4.  Brand panel (left): wordmark, headline, application route
+   5.  Form panel (right): notice, card, headings
+   6.  Form controls: fields, segmented choice, checkbox
+   7.  Buttons and links
+   8.  Footer
+   9.  Responsive rules (tablet / phone)
+   10. Accessibility: reduced motion
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS
+   Every colour, font and spacing value lives here as a CSS custom property,
+   so the whole look can be re-themed by editing this one block.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Colour palette */
+  --teal-900: #0f3d3e;      /* brand panel background, primary buttons   */
+  --teal-700: #17595a;      /* hover state for primary buttons           */
+  --teal-100: #dcebe8;      /* soft tint for the route lines             */
+  --gold-500: #e9a820;      /* single accent: current step, focus ring   */
+  --paper:    #f4f7f6;      /* form-panel background                     */
+  --white:    #ffffff;      /* input backgrounds                         */
+  --ink:      #16282a;      /* main text                                 */
+  --ink-soft: #4a5c5e;      /* hints and secondary text                  */
+  --line:     #8a9c9a;      /* input borders (passes 3:1 contrast)       */
+  --error:    #b3261e;      /* invalid input messages                    */
+
+  /* Typography: first name is the web font, the rest are safe fallbacks
+     so the page still looks fine if the fonts fail to load offline. */
+  --font-head: "Sora", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+
+  /* Spacing scale (based on rem so it follows the user's font size) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.5rem;
+  --space-6: 4rem;
+
+  /* Shape */
+  --radius: 8px;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. BASE / RESET
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;   /* padding and border stay inside element width */
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;     /* 17px: comfortable on phones */
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+h1, h2, h3 {
+  font-family: var(--font-head);
+  line-height: 1.2;
+  margin: 0;
+}
+
+p { margin: 0; }
+
+a {
+  color: var(--teal-900);
+  text-underline-offset: 0.2em;
+}
+
+/* Keyboard focus ring, shared by every interactive element. */
+:focus-visible {
+  outline: 3px solid var(--gold-500);
+  outline-offset: 2px;
+}
+
+/* Helper: hides text visually but keeps it for screen readers. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. PAGE LAYOUT
+   A two-column grid: narrow brand panel on the left, form on the right.
+   -------------------------------------------------------------------------- */
+.page {
+  display: grid;
+  grid-template-columns: minmax(20rem, 5fr) 7fr;
+  min-height: 100vh;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. BRAND PANEL (left)
+   -------------------------------------------------------------------------- */
+.brand-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  background: var(--teal-900);
+  color: #eaf3f1;
+}
+
+/* Wordmark: a simple "M" tile plus the university name.
+   This is an original prototype mark, not the official MUST logo. */
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  color: inherit;
+}
+
+.wordmark__tile {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 12px 12px 12px 3px;   /* one sharper corner makes it ours */
+  background: var(--gold-500);
+  color: var(--teal-900);
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.wordmark__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.wordmark__name {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.375rem;
+  letter-spacing: 0.04em;
+}
+
+.wordmark__full {
+  font-size: 0.875rem;
+  color: #b9d1cd;
+}
+
+.brand-panel__intro h1 {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 700;
+  max-width: 14ch;
+}
+
+.brand-panel__intro p {
+  margin-top: var(--space-3);
+  max-width: 34ch;
+  color: #c6dbd7;
+}
+
+/* THE APPLICATION ROUTE – the one memorable element of the design.
+   An ordered list that uses CSS counters for the step numbers, with a
+   vertical line joining the steps. The current step (aria-current="step")
+   gets the gold marker. */
+.route {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: step;              /* start the step counter at 0 */
+}
+
+.route__step {
+  position: relative;
+  counter-increment: step;          /* +1 for every <li> */
+  padding: 0 0 var(--space-4) 3.25rem;
+}
+
+.route__step:last-child { padding-bottom: 0; }
+
+/* The numbered circle */
+.route__step::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 2px solid #5f8a86;
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: #b9d1cd;
+}
+
+/* The line that joins this circle to the next one */
+.route__step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: calc(1.125rem - 1px);       /* centre of the circle */
+  top: 2.4rem;
+  bottom: 0.15rem;
+  width: 2px;
+  background: #3b6b68;
+}
+
+/* Current step: filled gold circle and brighter text */
+.route__step[aria-current="step"]::before {
+  background: var(--gold-500);
+  border-color: var(--gold-500);
+  color: var(--teal-900);
+}
+
+.route__title {
+  display: block;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.route__hint {
+  display: block;
+  font-size: 0.9375rem;
+  color: #b9d1cd;
+}
+
+.brand-panel__motto {
+  font-family: var(--font-head);
+  font-size: 0.9375rem;
+  color: var(--gold-500);
+}
+
+/* Mobile-only "Step X of 4" line (hidden on large screens, see section 9) */
+.mobile-step {
+  display: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   5. FORM PANEL (right)
+   -------------------------------------------------------------------------- */
+.form-panel {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4) var(--space-5);
+  background: var(--paper);
+}
+
+/* Prototype notice: makes clear this is a student design, not the real
+   portal, and points to the official address. */
+.notice {
+  max-width: 34rem;
+  padding: var(--space-2) var(--space-3);
+  border-left: 4px solid var(--gold-500);
+  background: #fff8e6;
+  font-size: 0.9375rem;
+  color: var(--ink);
+}
+
+.card {
+  width: 100%;
+  max-width: 28rem;
+  margin: auto;                     /* centres the form vertically */
+  padding: var(--space-5) 0;
+}
+
+.card h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.card__lede {
+  margin: var(--space-2) 0 var(--space-4);
+  color: var(--ink-soft);
+}
+
+
+/* --------------------------------------------------------------------------
+   6. FORM CONTROLS
+   -------------------------------------------------------------------------- */
+.field {
+  margin-bottom: var(--space-3);
+}
+
+/* Two fields side by side (first name / last name) */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+label,
+legend {
+  display: block;
+  margin-bottom: var(--space-1);
+  padding: 0;               /* removes the browser's default legend indent */
+  font-weight: 600;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"] {
+  width: 100%;
+  min-height: 2.875rem;             /* large enough for touch screens */
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  font: inherit;
+  color: var(--ink);
+}
+
+input:hover { border-color: var(--teal-900); }
+
+/* Show an error style only after the user has interacted with the field
+   (:user-invalid), so empty forms do not start out looking broken. */
+input:user-invalid {
+  border-color: var(--error);
+  background: #fff6f5;
+}
+
+.field__hint {
+  margin-top: var(--space-1);
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+}
+
+/* Segmented choice: two radio buttons styled as tabs.
+   The real <input> stays in the page (and keyboard-focusable), only
+   visually hidden, so screen readers and arrow keys still work. */
+fieldset.field {
+  border: 0;
+  margin-inline: 0;         /* remove the browser's default 2px side margin */
+  padding: 0;
+  min-width: 0;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.segmented label {
+  position: relative;
+  display: flex;            /* lets the visible box fill the whole label, */
+  margin: 0;                /* so both choices are always the same height */
+  font-weight: 400;
+}
+
+.segmented input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+
+.segmented span {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 0.75rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.segmented input:checked + span {
+  border-color: var(--teal-900);
+  background: var(--teal-900);
+  color: #ffffff;
+}
+
+/* Focus ring on the visible box when the hidden radio has focus */
+.segmented input:focus-visible + span {
+  outline: 3px solid var(--gold-500);
+  outline-offset: 2px;
+}
+
+/* Checkbox with a text label beside it */
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: var(--space-3) 0;
+  font-weight: 400;
+}
+
+.check input {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.2rem;
+  accent-color: var(--teal-900);
+}
+
+
+/* --------------------------------------------------------------------------
+   7. BUTTONS AND LINKS
+   -------------------------------------------------------------------------- */
+.btn {
+  display: block;
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.7rem 1rem;
+  border: 2px solid var(--teal-900);
+  border-radius: var(--radius);
+  font: inherit;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btn--primary {
+  background: var(--teal-900);
+  color: #ffffff;
+}
+
+.btn--primary:hover { background: var(--teal-700); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--teal-900);
+}
+
+.btn--ghost:hover { background: var(--teal-100); }
+
+/* Text under a button, e.g. "Already have an access code? Log in" */
+.alt-action {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid #d3dcda;
+  color: var(--ink-soft);
+}
+
+
+/* --------------------------------------------------------------------------
+   8. FOOTER
+   -------------------------------------------------------------------------- */
+.page-footer {
+  padding-top: var(--space-3);
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+/* Keeps a phone number on one line instead of splitting it */
+.nowrap {
+  white-space: nowrap;
+}
+
+
+/* --------------------------------------------------------------------------
+   9. RESPONSIVE RULES
+   -------------------------------------------------------------------------- */
+
+/* Tablet and phone: stack the panels, shrink the brand panel into a
+   compact header and replace the full route with a one-line step count. */
+@media (max-width: 52rem) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-panel {
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+
+  .brand-panel__intro p,
+  .route,
+  .brand-panel__motto {
+    display: none;
+  }
+
+  .brand-panel__intro h1 {
+    max-width: none;
+    font-size: 1.5rem;
+  }
+
+  .mobile-step {
+    display: block;
+    color: var(--gold-500);
+    font-weight: 600;
+  }
+
+  .form-panel {
+    padding: var(--space-4);
+  }
+
+  .card {
+    margin: 0 auto;
+    padding: var(--space-4) 0;
+  }
+}
+
+/* Very narrow phones: stack first name / last name and the segmented choice */
+@media (max-width: 26rem) {
+  .field-row,
+  .segmented {
+    grid-template-columns: 1fr;
+  }
+
+  /* Each .field already has its own bottom margin, so no extra row gap */
+  .field-row {
+    gap: 0;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   10. ACCESSIBILITY: REDUCED MOTION
+   Respect users who ask their device to minimise animation.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
